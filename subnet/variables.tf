@@ -17,8 +17,3 @@ variable "private_subnet_cidrs" {
 variable "azs" {
   type = list(string)
 }
-
-variable "public_subnet_id" {
-  description = "Public subnet for NAT Gateway"
-  type        = string
-}
