@@ -79,3 +79,8 @@ resource "aws_eks_node_group" "this" {
     aws_iam_role_policy_attachment.worker_node_policy
   ]
 }
+
+resource "aws_iam_user_policy_attachment" "eks_access" {
+  user       = "ravikumar"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
