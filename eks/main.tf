@@ -26,6 +26,11 @@ resource "aws_eks_cluster" "this" {
     subnet_ids = var.subnet_ids
   }
 
+  access_config {
+  authentication_mode                         = var.authentication_mode
+  bootstrap_cluster_creator_admin_permissions = var.enable_creator_admin
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.eks_cluster_policy
   ]
@@ -83,4 +88,30 @@ resource "aws_eks_node_group" "this" {
 resource "aws_iam_user_policy_attachment" "eks_access" {
   user       = "ravikumar"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+resource "aws_eks_access_entry" "this" {
+  for_each = {
+    for entry in var.access_entries :
+    entry.principal_arn => entry
+  }
+
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = each.value.principal_arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "this" {
+  for_each = {
+    for entry in var.access_entries :
+    entry.principal_arn => entry
+  }
+
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = each.value.principal_arn
+  policy_arn    = each.value.policy_arn
+
+  access_scope {
+    type = "cluster"
+  }
 }
