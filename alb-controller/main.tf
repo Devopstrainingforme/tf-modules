@@ -34,7 +34,7 @@ resource "aws_iam_role_policy_attachment" "attach" {
   policy_arn = aws_iam_policy.alb_controller.arn
 }
 
-resource "kubernetes_service_account" "alb" {
+resource "kubernetes_service_account_v1" "alb" {
   metadata {
     name      = "aws-load-balancer-controller"
     namespace = "kube-system"
@@ -51,30 +51,18 @@ resource "helm_release" "alb_controller" {
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
 
-  depends_on = [kubernetes_service_account.alb]
+  depends_on = [kubernetes_service_account_v1.alb]
 
-  set {
-    name  = "clusterName"
-    value = var.cluster_name
-  }
+  values = [
+    yamlencode({
+      clusterName = var.cluster_name
+      region      = var.region
+      vpcId       = var.vpc_id
 
-  set {
-    name  = "region"
-    value = var.region
-  }
-
-  set {
-    name  = "vpcId"
-    value = var.vpc_id
-  }
-
-  set {
-    name  = "serviceAccount.create"
-    value = "false"
-  }
-
-  set {
-    name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
-  }
+      serviceAccount = {
+        create = false
+        name   = "aws-load-balancer-controller"
+      }
+    })
+  ]
 }
