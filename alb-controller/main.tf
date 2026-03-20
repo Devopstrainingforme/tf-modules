@@ -56,14 +56,17 @@ resource "helm_release" "alb" {
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
 
-  depends_on = [kubernetes_service_account_v1.alb]
-
   values = [
     yamlencode({
       clusterName = var.cluster_name
+
       serviceAccount = {
-        create = false
+        create = true
         name   = "aws-load-balancer-controller"
+
+        annotations = {
+          "eks.amazonaws.com/role-arn" = aws_iam_role.alb_controller.arn
+        }
       }
     })
   ]
