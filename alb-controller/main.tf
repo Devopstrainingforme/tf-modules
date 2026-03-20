@@ -1,3 +1,14 @@
+terraform {
+  required_providers {
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+    }
+    helm = {
+      source = "hashicorp/helm"
+    }
+  }
+}
+
 resource "aws_iam_policy" "alb_controller" {
   name = "${var.cluster_name}-alb-controller"
 
