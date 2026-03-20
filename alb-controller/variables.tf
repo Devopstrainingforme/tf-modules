@@ -6,3 +6,7 @@ variable "enable_alb" {
   type    = bool
   default = true
 }
+
+variable "kubeconfig_path" {
+  default = "~/.kube/config"
+}
