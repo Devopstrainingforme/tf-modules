@@ -1,12 +1,14 @@
-variable "cluster_name" {}
-variable "oidc_provider_arn" {}
-variable "oidc_provider_url" {}
-
-variable "enable_alb" {
-  type    = bool
-  default = true
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
 }
 
-variable "kubeconfig_path" {
-  default = "~/.kube/config"
+variable "oidc_provider_arn" {
+  description = "OIDC provider ARN for IRSA"
+  type        = string
+}
+
+variable "oidc_provider_url" {
+  description = "OIDC provider URL for IRSA"
+  type        = string
 }
